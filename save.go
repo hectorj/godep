@@ -52,13 +52,15 @@ For more about specifying packages, see 'go help packages'.
 }
 
 var (
-	saveCopy = true
-	saveR    = false
+	saveCopy   = true
+	saveR      = false
+	saveIgnore = ""
 )
 
 func init() {
 	cmdSave.Flag.BoolVar(&saveCopy, "copy", true, "copy source code")
 	cmdSave.Flag.BoolVar(&saveR, "r", false, "rewrite import paths")
+	cmdSave.Flag.StringVar(&saveIgnore, "ignore", "", "ignore packages")
 }
 
 func runSave(cmd *Command, args []string) {
@@ -104,6 +106,7 @@ func save(pkgs []string) error {
 	if err != nil {
 		return err
 	}
+
 	if gnew.Deps == nil {
 		gnew.Deps = make([]Dependency, 0) // produce json [], not null
 	}

@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 type Package struct {
@@ -47,6 +48,7 @@ func LoadPackages(name ...string) (a []*Package, err error) {
 		return nil, err
 	}
 	d := json.NewDecoder(r)
+	ignoredPackages := strings.Split(saveIgnore, ",")
 	for {
 		info := new(Package)
 		err = d.Decode(info)
@@ -56,7 +58,18 @@ func LoadPackages(name ...string) (a []*Package, err error) {
 		if err != nil {
 			info.Error.Err = err.Error()
 		}
-		a = append(a, info)
+		var ignored bool
+		if saveIgnore != "" {
+			for _, ignoredPackage := range ignoredPackages {
+				if strings.Index(info.ImportPath, ignoredPackage) == 0 {
+					ignored = true
+					break
+				}
+			}
+		}
+		if !ignored {
+			a = append(a, info)
+		}
 	}
 	err = cmd.Wait()
 	if err != nil {
