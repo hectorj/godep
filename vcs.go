@@ -14,6 +14,7 @@ import (
 type VCS struct {
 	vcs *vcs.Cmd
 
+	CleanTreeCmd string
 	IdentifyCmd string
 	DescribeCmd string
 	DiffCmd     string
@@ -33,6 +34,7 @@ var vcsBzr = &VCS{
 var vcsGit = &VCS{
 	vcs: vcs.ByCmd("git"),
 
+	CleanTreeCmd: "reset --hard",
 	IdentifyCmd: "rev-parse HEAD",
 	DescribeCmd: "describe --tags",
 	DiffCmd:     "diff {rev}",
@@ -43,6 +45,7 @@ var vcsGit = &VCS{
 var vcsHg = &VCS{
 	vcs: vcs.ByCmd("hg"),
 
+	CleanTreeCmd: "purge --all",
 	IdentifyCmd: "identify --id --debug",
 	DescribeCmd: "log -r . --template {latesttag}-{latesttagdistance}",
 	DiffCmd:     "diff -r {rev}",
@@ -106,7 +109,8 @@ func (v *VCS) exists(dir, rev string) bool {
 // RevSync checks out the revision given by rev in dir.
 // The dir must exist and rev must be a valid revision.
 func (v *VCS) RevSync(dir, rev string) error {
-	return v.run(dir, v.vcs.TagSyncCmd, "tag", rev)
+	return v.run(dir, v.CleanTreeCmd)
+	return v.run(dir, v.vcs.TagSyncCmd)
 }
 
 // run runs the command line cmd in the given directory.
