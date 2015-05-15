@@ -45,7 +45,7 @@ var vcsGit = &VCS{
 var vcsHg = &VCS{
 	vcs: vcs.ByCmd("hg"),
 
-	CleanTreeCmd: "purge --all",
+	CleanTreeCmd: "up -C",
 	IdentifyCmd: "identify --id --debug",
 	DescribeCmd: "log -r . --template {latesttag}-{latesttagdistance}",
 	DiffCmd:     "diff -r {rev}",
