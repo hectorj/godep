@@ -71,7 +71,8 @@ func VCSFromDir(dir, srcRoot string) (*VCS, string, error) {
 func VCSForImportPath(importPath string) (*VCS, error) {
 	rr, err := vcs.RepoRootForImportPath(importPath, false)
 	if err != nil {
-		return nil, err
+		return vcsGit, nil
+		//return nil, err
 	}
 	vcs := cmd[rr.VCS]
 	if vcs == nil {

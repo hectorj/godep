@@ -25,6 +25,7 @@ type Godeps struct {
 // A Dependency is a specific revision of a package.
 type Dependency struct {
 	ImportPath string
+	Url        string `json:",omitempty"`
 	Comment    string `json:",omitempty"` // Description of commit, if present.
 	Rev        string // VCS-specific commit ID.
 
@@ -174,7 +175,11 @@ func ReadAndLoadGodeps(path string) (*Godeps, error) {
 
 	for i := range g.Deps {
 		d := &g.Deps[i]
-		d.vcs, err = VCSForImportPath(d.ImportPath)
+		if d.Url != "" {
+			d.vcs, err = VCSForImportPath(d.Url)
+		} else {
+			d.vcs, err = VCSForImportPath(d.ImportPath)
+		}
 		if err != nil {
 			return nil, err
 		}
